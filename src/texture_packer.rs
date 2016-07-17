@@ -150,10 +150,6 @@ where Pix: Pixel, P: Packer<Pixel=Pix>, T:  Texture<Pixel=Pix> {
     fn get(&self, x: u32, y: u32) -> Option<Pix> {
         if let Some(frame) = self.get_frame_at(x, y) {
             if let Some(texture) = self.textures.get(&frame.key) {
-                if self.config.texture_outlines && frame.frame.is_outline(x, y) {
-                    return Some(<Pix as Pixel>::outline());
-                }
-
                 let x = x - frame.frame.x;
                 let y = y - frame.frame.y;
 
