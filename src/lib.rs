@@ -3,8 +3,6 @@ pub use frame::Frame;
 pub use texture_packer::TexturePacker;
 pub use texture_packer_config::TexturePackerConfig;
 
-pub mod texture;
-
 mod rect;
 mod frame;
 mod texture_packer;

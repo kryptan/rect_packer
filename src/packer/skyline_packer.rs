@@ -8,9 +8,6 @@ use {
 };
 
 use packer::Packer;
-use texture::{
-    Texture,
-};
 
 struct Skyline {
     pub x: u32,
@@ -156,9 +153,9 @@ impl SkylinePacker {
 }
 
 impl Packer for SkylinePacker {
-    fn pack(&mut self, key: String, texture: &Texture) -> Option<Frame> {
-        let mut width = texture.width();
-        let mut height = texture.height();
+    fn pack(&mut self, key: String, (original_width, original_height): (u32, u32)) -> Option<Frame> {
+        let mut width = original_width;
+        let mut height = original_height;
 
         width += self.config.texture_padding;
         height += self.config.texture_padding;
@@ -176,12 +173,11 @@ impl Packer for SkylinePacker {
                 key: key,
                 frame: rect,
                 rotated: rotated,
-                trimmed: false,
                 source: Rect {
                     x: 0,
                     y: 0,
-                    w: texture.width(),
-                    h: texture.height(),
+                    w: original_width,
+                    h: original_height,
                 },
             })
         } else {
@@ -189,7 +185,7 @@ impl Packer for SkylinePacker {
         }
     }
 
-    fn can_pack(&self, texture: &Texture) -> bool {
-        self.find_skyline(texture.width() + self.config.texture_padding, texture.height() + self.config.texture_padding).is_some()
+    fn can_pack(&self, (width, height): (u32, u32)) -> bool {
+        self.find_skyline(width + self.config.texture_padding, height + self.config.texture_padding).is_some()
     }
 }

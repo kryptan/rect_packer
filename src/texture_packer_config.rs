@@ -17,7 +17,4 @@ pub struct TexturePackerConfig {
     pub border_padding: u32,
     /// Size of the padding between frames in pixel.
     pub texture_padding: u32,
-
-    /// True to trim the empty pixels of the input images.
-    pub trim: bool,
 }
