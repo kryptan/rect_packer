@@ -1,13 +1,13 @@
 #[derive(Copy, Clone, Debug)]
 pub struct Rect {
-    pub x: u32,
-    pub y: u32,
-    pub w: u32,
-    pub h: u32,
+    pub x: i32,
+    pub y: i32,
+    pub w: i32,
+    pub h: i32,
 }
 
 impl Rect {
-    pub fn new(x: u32, y: u32, w: u32, h: u32) -> Rect {
+    pub fn new(x: i32, y: i32, w: i32, h: i32) -> Rect {
         Rect {
             x: x,
             y: y,
@@ -17,27 +17,27 @@ impl Rect {
     }
 
     #[inline(always)]
-    pub fn top(&self) -> u32 {
+    pub fn top(&self) -> i32 {
         self.y
     }
 
     #[inline(always)]
-    pub fn bottom(&self) -> u32 {
+    pub fn bottom(&self) -> i32 {
         self.y + self.h
     }
 
     #[inline(always)]
-    pub fn left(&self) -> u32 {
+    pub fn left(&self) -> i32 {
         self.x
     }
 
     #[inline(always)]
-    pub fn right(&self) -> u32 {
+    pub fn right(&self) -> i32 {
         self.x + self.w
     }
 
     #[inline(always)]
-    pub fn area(&self) -> u32 {
+    pub fn area(&self) -> i32 {
         self.w * self.h
     }
 
@@ -59,7 +59,7 @@ impl Rect {
         self.bottom() >= other.bottom()
     }
 
-    pub fn contains_point(&self, x: u32, y: u32) -> bool {
+    pub fn contains_point(&self, x: i32, y: i32) -> bool {
         self.left() <= x && x < self.right() &&
         self.top() <= y && y < self.bottom()
     }

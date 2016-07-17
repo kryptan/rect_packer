@@ -5,19 +5,19 @@ use {Config, Rect};
 
 #[derive(Clone)]
 struct Skyline {
-    pub x: u32,
-    pub y: u32,
-    pub w: u32,
+    pub x: i32,
+    pub y: i32,
+    pub w: i32,
 }
 
 impl Skyline {
     #[inline(always)]
-    pub fn left(&self) -> u32 {
+    pub fn left(&self) -> i32 {
         self.x
     }
 
     #[inline(always)]
-    pub fn right(&self) -> u32 {
+    pub fn right(&self) -> i32 {
         self.x + self.w
     }
 }
@@ -33,8 +33,8 @@ pub struct Packer {
 
 impl Packer {
     pub fn new(config: Config) -> Packer {
-        let width = config.width + config.rectangle_padding - 2*config.border_padding;
-        let height = config.height + config.rectangle_padding - 2*config.border_padding;
+        let width = max(0, config.width + config.rectangle_padding - 2*config.border_padding);
+        let height = max(0, config.height + config.rectangle_padding - 2*config.border_padding);
 
         let skylines = vec![Skyline {
             x: 0,
@@ -49,7 +49,11 @@ impl Packer {
         }
     }
 
-    pub fn pack(&mut self, (width, height): (u32, u32)) -> Option<Rect> {
+    pub fn pack(&mut self, (width, height): (i32, i32)) -> Option<Rect> {
+        if width <= 0 || height <= 0 {
+            return None
+        }
+
         let padded_width = width + self.config.rectangle_padding;
         let padded_height = height + self.config.rectangle_padding;
 
@@ -68,12 +72,12 @@ impl Packer {
         }
     }
 
-    pub fn can_pack(&self, (width, height): (u32, u32)) -> bool {
+    pub fn can_pack(&self, (width, height): (i32, i32)) -> bool {
         self.find_skyline(width + self.config.rectangle_padding, height + self.config.rectangle_padding).is_some()
     }
 
     // return `rect` if rectangle (w, h) can fit the skyline started at `i`
-    fn can_put(&self, mut i: usize, w: u32, h: u32) -> Option<Rect> {
+    fn can_put(&self, mut i: usize, w: i32, h: i32) -> Option<Rect> {
         let mut rect = Rect::new(self.skylines[i].x, 0, w, h);
         let mut width_left = rect.w;
         loop {
@@ -91,9 +95,9 @@ impl Packer {
         }
     }
 
-    fn find_skyline(&self, w: u32, h: u32) -> Option<(usize, Rect)> {
-        let mut bottom = std::u32::MAX;
-        let mut width = std::u32::MAX;
+    fn find_skyline(&self, w: i32, h: i32) -> Option<(usize, Rect)> {
+        let mut bottom = std::i32::MAX;
+        let mut width = std::i32::MAX;
         let mut index = None;
         let mut rect = Rect::new(0, 0, 0, 0);
 

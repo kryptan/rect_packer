@@ -16,14 +16,14 @@ mod test;
 #[derive(Copy, Clone, Debug)]
 pub struct Config {
     /// Width of the encompassing rectangle.
-    pub width: u32,
+    pub width: i32,
     /// Height of the encompassing rectangle.
-    pub height: u32,
+    pub height: i32,
 
     /// Minimum spacing between border and rectangles.
-    pub border_padding: u32,
+    pub border_padding: i32,
     /// Minimum spacing between rectangles.
-    pub rectangle_padding: u32,
+    pub rectangle_padding: i32,
 
     /// Allow 90° rotation of the input rectangles.
     pub allow_rotation: bool,
