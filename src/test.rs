@@ -44,10 +44,6 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
                 assert!((frame.width, frame.height) == (w, h));
             }
 
-            if !rect.contains(&frame) {
-                println!("{:?} {:?}", rect, frame);
-            }
-
             assert!(rect.contains(&frame));
 
             for other_frame in &frames {

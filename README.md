@@ -1,7 +1,8 @@
 rect-packer [![Build Status]][Travis CI]
 ========
 Pack multiple rectangles into a larger one. Can be used for packing sprites into a
-texture for 2d games. Uses skyline heuristic. Heavily tested.
+texture for 2d games. Uses skyline heuristic. Heavily tested with random data to ensure
+that it always produces correct result.
 
 [Documentation]
 
