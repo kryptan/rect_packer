@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Config","Describes size and padding requirements of rectangle packing."],["Packer","`Packer` is the main structure in this crate. It holds packing context."],["Rect","Rectangle with integer coordinates."]]});

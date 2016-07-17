@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Packer","`Packer` is the main structure in this crate. It holds packing context."]]});

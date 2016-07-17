@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Rect","Rectangle with integer coordinates."]]});
