@@ -2,7 +2,7 @@
 name = "rect_packer"
 version = "0.1.0"
 authors = ["kryptan"]
-keywords = ["texture", "packer", "sprite", "packing", "rectangle", "pack", "bin"]
+keywords = ["texture", "packer", "sprite", "packing", "rectangle"]
 description = "A rectangle packing library. Heavily tested with random data to ensure that it always produces correct result."
 license = "MIT"
 readme = "README.md"
