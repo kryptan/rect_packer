@@ -6,8 +6,6 @@ pub use texture_packer::TexturePacker;
 pub use texture_packer_config::TexturePackerConfig;
 
 pub mod texture;
-pub mod importer;
-pub mod exporter;
 
 mod rect;
 mod frame;

@@ -1,5 +1,4 @@
 [package]
-
 name = "texture_packer"
 version = "0.8.0"
 authors = ["Coeuvre <coeuvre@gmail.com>"]
@@ -12,7 +11,6 @@ homepage = "https://github.com/PistonDevelopers/texture_packer"
 documentation = "http://docs.piston.rs/texture_packer"
 
 [lib]
-
 name = "texture_packer"
 
 [dependencies.image]
