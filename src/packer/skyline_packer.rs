@@ -173,12 +173,6 @@ impl Packer for SkylinePacker {
                 key: key,
                 frame: rect,
                 rotated: rotated,
-                source: Rect {
-                    x: 0,
-                    y: 0,
-                    w: original_width,
-                    h: original_height,
-                },
             })
         } else {
             None

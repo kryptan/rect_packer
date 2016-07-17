@@ -4,8 +4,6 @@ use {
     TexturePackerConfig,
 };
 
-use rect::Rect;
-
 use frame::Frame;
 use packer::{
     Packer,
@@ -30,15 +28,10 @@ impl TexturePacker<SkylinePacker> {
 
 impl<P: Packer> TexturePacker<P> {
     pub fn pack(&mut self, key: String, (width, height): (u32, u32)) {
-        let source = Rect::new(0, 0, width, height);
-
         if let Some(mut frame) = self.packer.pack(key.clone(), (width, height)) {
             frame.frame.x += self.config.border_padding;
             frame.frame.y += self.config.border_padding;
-            frame.source = source;
-            frame.source.w = width;
-            frame.source.h = height;
-            self.frames.insert(key.clone(), frame);
+            self.frames.insert(key, frame);
         }
     }
 
@@ -47,10 +40,6 @@ impl<P: Packer> TexturePacker<P> {
     }
 
     pub fn get_frame(&self, key: &str) -> Option<&Frame> {
-        if let Some(frame) = self.frames.get(key) {
-            Some(frame)
-        } else {
-            None
-        }
+        self.frames.get(key)
     }
 }
