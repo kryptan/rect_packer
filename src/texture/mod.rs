@@ -20,28 +20,6 @@ pub trait Texture {
         let w = self.height();
         self.get(y, w - x - 1)
     }
-
-    fn is_column_transparent(&self, col: u32) -> bool {
-        for y in 0..self.height() {
-            if let Some(p) = self.get(col, y) {
-                if !p.is_transparent() {
-                    return false;
-                }
-            }
-        }
-        true
-    }
-
-    fn is_row_transparent(&self, row: u32) -> bool {
-        for x in 0..self.width() {
-            if let Some(p) = self.get(x, row) {
-                if !p.is_transparent() {
-                    return false;
-                }
-            }
-        }
-        true
-    }
 }
 
 pub trait Pixel: Sized {

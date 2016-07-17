@@ -170,42 +170,5 @@ where Pix: Pixel, P: Packer<Pixel=Pix>, T:  Texture<Pixel=Pix> {
 }
 
 fn trim_texture<T: Texture>(texture: &T) -> Rect {
-    let mut x1 = 0;
-    for x in 0..texture.width() {
-        if texture.is_column_transparent(x) {
-            x1 = x + 1;
-        } else {
-            break;
-        }
-    }
-
-    let mut x2 = texture.width() - 1;
-    for x in 0..texture.width() {
-        let x = texture.width() - x - 1;
-        if texture.is_column_transparent(x) {
-            x2 = x - 1;
-        } else {
-            break;
-        }
-    }
-
-    let mut y1 = 0;
-    for y in 0..texture.height() {
-        if texture.is_row_transparent(y) {
-            y1 = y + 1;
-        } else {
-            break;
-        }
-    }
-
-    let mut y2 = texture.height() - 1;
-    for y in 0..texture.height() {
-        let y = texture.height() - y - 1;
-        if texture.is_row_transparent(y) {
-            y2 = y - 1;
-        } else {
-            break;
-        }
-    }
-    Rect::new_with_points(x1, y1, x2, y2)
+    Rect::new_with_points(0, 0, texture.width() - 1, texture.height() - 1)
 }
