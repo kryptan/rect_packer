@@ -24,12 +24,12 @@ pub struct TexturePacker<P> {
     config: TexturePackerConfig,
 }
 
-impl <'a, Pix> TexturePacker<SkylinePacker<Pix>> {
-    pub fn new_skyline(config: TexturePackerConfig) -> TexturePacker<SkylinePacker<Pix>> {
+impl TexturePacker<SkylinePacker> {
+    pub fn new_skyline(config: TexturePackerConfig) -> TexturePacker<SkylinePacker> {
         TexturePacker {
             textures: HashMap::new(),
             frames: HashMap::new(),
-            packer: SkylinePacker::<Pix>::new(config),
+            packer: SkylinePacker::new(config),
             config: config,
         }
     }

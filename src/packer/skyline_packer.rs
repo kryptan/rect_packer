@@ -1,6 +1,5 @@
 use std;
 use std::cmp::max;
-use std::marker::PhantomData;
 
 use {
     TexturePackerConfig,
@@ -31,18 +30,16 @@ impl Skyline {
     }
 }
 
-pub struct SkylinePacker<P> {
+pub struct SkylinePacker {
     config: TexturePackerConfig,
     border: Rect,
 
     // the skylines are sorted by their `x` position
     skylines: Vec<Skyline>,
-
-    phantom_data: PhantomData<P>,
 }
 
-impl<P> SkylinePacker<P> {
-    pub fn new(config: TexturePackerConfig) -> SkylinePacker<P> {
+impl SkylinePacker {
+    pub fn new(config: TexturePackerConfig) -> SkylinePacker {
         let mut skylines = Vec::new();
         skylines.push(Skyline {
             x: 0,
@@ -54,7 +51,6 @@ impl<P> SkylinePacker<P> {
             config: config,
             border: Rect::new(0, 0, config.max_width, config.max_height),
             skylines: skylines,
-            phantom_data: PhantomData,
         }
     }
 
@@ -159,7 +155,7 @@ impl<P> SkylinePacker<P> {
     }
 }
 
-impl<P> Packer for SkylinePacker<P> {
+impl Packer for SkylinePacker {
     fn pack(&mut self, key: String, texture: &Texture) -> Option<Frame> {
         let mut width = texture.width();
         let mut height = texture.height();

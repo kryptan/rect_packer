@@ -23,4 +23,3 @@ impl Texture for SubTexture {
         self.source.h
     }
 }
-
