@@ -1,5 +1,4 @@
 use texture::{
-    Pixel,
     Texture,
 };
 
@@ -9,20 +8,6 @@ pub struct RGBA8 {
     pub g: u8,
     pub b: u8,
     pub a: u8,
-}
-
-impl Pixel for RGBA8 {
-    fn is_transparent(&self) -> bool {
-        self.a == 0
-    }
-
-    fn transparency() -> Option<Self> {
-        Some(RGBA8 { r: 0, g: 0, b: 0, a: 0 })
-    }
-
-    fn outline() -> RGBA8 {
-        RGBA8 { r: 255, g: 0, b: 0, a: 255 }
-    }
 }
 
 pub struct MemoryRGBA8Texture {

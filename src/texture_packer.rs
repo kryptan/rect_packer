@@ -7,7 +7,6 @@ use {
 use rect::Rect;
 
 use texture::{
-    Pixel,
     Texture,
     SubTexture,
 };
@@ -25,7 +24,7 @@ pub struct TexturePacker<'a, T: 'a + Clone, P> {
     config: TexturePackerConfig,
 }
 
-impl <'a, Pix: Pixel, T: 'a + Clone + Texture<Pixel=Pix>> TexturePacker<'a, T, SkylinePacker<Pix>> {
+impl <'a, Pix, T: 'a + Clone + Texture<Pixel=Pix>> TexturePacker<'a, T, SkylinePacker<Pix>> {
     pub fn new_skyline(config: TexturePackerConfig) -> TexturePacker<'a, T, SkylinePacker<Pix>> {
         TexturePacker {
             textures: HashMap::new(),
@@ -36,7 +35,7 @@ impl <'a, Pix: Pixel, T: 'a + Clone + Texture<Pixel=Pix>> TexturePacker<'a, T, S
     }
 }
 
-impl<'a, Pix: Pixel, P: Packer<Pixel=Pix>, T: Clone + Texture<Pixel=Pix>> TexturePacker<'a, T, P> {
+impl<'a, Pix, P: Packer<Pixel=Pix>, T: Clone + Texture<Pixel=Pix>> TexturePacker<'a, T, P> {
     pub fn pack_ref(&mut self, key: String, texture: &'a T) {
         let (w, h) = (texture.width(), texture.height());
         let source = if self.config.trim {
@@ -104,7 +103,7 @@ impl<'a, Pix: Pixel, P: Packer<Pixel=Pix>, T: Clone + Texture<Pixel=Pix>> Textur
 }
 
 impl<'a, Pix, P, T: Clone> Texture for  TexturePacker<'a, T, P>
-where Pix: Pixel, P: Packer<Pixel=Pix>, T:  Texture<Pixel=Pix> {
+where P: Packer<Pixel=Pix>, T:  Texture<Pixel=Pix> {
     type Pixel = Pix;
 
     fn width(&self) -> u32 {

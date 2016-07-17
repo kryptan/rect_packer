@@ -10,7 +10,6 @@ use {
 
 use packer::Packer;
 use texture::{
-    Pixel,
     Texture,
 };
 
@@ -32,7 +31,7 @@ impl Skyline {
     }
 }
 
-pub struct SkylinePacker<P: Pixel> {
+pub struct SkylinePacker<P> {
     config: TexturePackerConfig,
     border: Rect,
 
@@ -42,7 +41,7 @@ pub struct SkylinePacker<P: Pixel> {
     phantom_data: PhantomData<P>,
 }
 
-impl<P: Pixel> SkylinePacker<P> {
+impl<P> SkylinePacker<P> {
     pub fn new(config: TexturePackerConfig) -> SkylinePacker<P> {
         let mut skylines = Vec::new();
         skylines.push(Skyline {
@@ -160,7 +159,7 @@ impl<P: Pixel> SkylinePacker<P> {
     }
 }
 
-impl<P: Pixel> Packer for SkylinePacker<P> {
+impl<P> Packer for SkylinePacker<P> {
     type Pixel = P;
 
     fn pack(&mut self, key: String, texture: &Texture<Pixel=P>) -> Option<Frame> {

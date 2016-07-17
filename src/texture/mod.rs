@@ -8,7 +8,7 @@ pub mod memory_rgba8_texture;
 pub mod image_texture;
 
 pub trait Texture {
-    type Pixel: Pixel;
+    type Pixel;
 
     fn width(&self) -> u32;
     fn height(&self) -> u32;
@@ -22,13 +22,7 @@ pub trait Texture {
     }
 }
 
-pub trait Pixel: Sized {
-    fn is_transparent(&self) -> bool;
-    fn transparency() -> Option<Self>;
-    fn outline() -> Self;
-}
-
-impl <P: Pixel> Texture for Box<Texture<Pixel=P> + 'static> {
+impl <P> Texture for Box<Texture<Pixel=P> + 'static> {
     type Pixel = P;
 
     fn width(&self) -> u32 {
