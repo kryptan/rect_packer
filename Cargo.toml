@@ -13,5 +13,3 @@ documentation = "http://docs.piston.rs/texture_packer"
 [lib]
 name = "texture_packer"
 
-[dependencies.image]
-version = "0.10.0"

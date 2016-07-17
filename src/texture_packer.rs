@@ -44,7 +44,7 @@ impl<'a, P: Packer> TexturePacker<P> {
             Rect::new(0, 0, w, h)
         };
 
-        let texture = SubTexture::from_ref(source);
+        let texture = SubTexture::new(source);
         if let Some(mut frame) = self.packer.pack(key.clone(), &texture) {
             frame.frame.x += self.config.border_padding;
             frame.frame.y += self.config.border_padding;

@@ -1,5 +1,3 @@
-extern crate image;
-
 pub use rect::Rect;
 pub use frame::Frame;
 pub use texture_packer::TexturePacker;

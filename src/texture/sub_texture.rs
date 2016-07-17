@@ -12,13 +12,6 @@ impl SubTexture {
             source: source,
         }
     }
-
-    pub fn from_ref(source: Rect) -> SubTexture {
-        SubTexture {
-            source: source,
-        }
-    }
-
 }
 
 impl Texture for SubTexture {
