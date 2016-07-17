@@ -5,7 +5,7 @@ extern crate rand;
 extern crate image;
 
 pub use rect::Rect;
-pub use packer::SkylinePacker;
+pub use packer::Packer;
 
 mod rect;
 mod packer;
@@ -13,29 +13,18 @@ mod packer;
 #[cfg(test)]
 mod test;
 
-#[derive(Clone, Debug)]
-pub struct Frame {
-    pub frame: Rect,
-    pub rotated: bool,
-}
-
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Config {
-    //
-    // layout configuration
-    //
-    /// Max width of the packed image.
+    /// Width of the encompassing rectangle.
     pub width: u32,
-    /// Max height of the packed image.
+    /// Height of the encompassing rectangle.
     pub height: u32,
-    /// Allow rotation (90°) of the input images.
-    pub allow_rotation: bool,
 
-    //
-    // texture configuration
-    //
-    /// Size of the padding on the outer edge of the packed image in pixel.
+    /// Minimum spacing between border and rectangles.
     pub border_padding: u32,
-    /// Size of the padding between frames in pixel.
-    pub texture_padding: u32,
+    /// Minimum spacing between rectangles.
+    pub rectangle_padding: u32,
+
+    /// Allow 90° rotation of the input rectangles.
+    pub allow_rotation: bool,
 }

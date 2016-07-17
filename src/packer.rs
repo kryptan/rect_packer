@@ -1,11 +1,7 @@
 use std;
 use std::cmp::max;
 
-use {
-    Config,
-    Rect,
-    Frame,
-};
+use {Config, Rect};
 
 #[derive(Clone)]
 struct Skyline {
@@ -27,7 +23,7 @@ impl Skyline {
 }
 
 #[derive(Clone)]
-pub struct SkylinePacker {
+pub struct Packer {
     config: Config,
     border: Rect,
 
@@ -35,10 +31,10 @@ pub struct SkylinePacker {
     skylines: Vec<Skyline>,
 }
 
-impl SkylinePacker {
-    pub fn new(config: Config) -> SkylinePacker {
-        let width = config.width + config.texture_padding - 2*config.border_padding;
-        let height = config.height + config.texture_padding - 2*config.border_padding;
+impl Packer {
+    pub fn new(config: Config) -> Packer {
+        let width = config.width + config.rectangle_padding - 2*config.border_padding;
+        let height = config.height + config.rectangle_padding - 2*config.border_padding;
 
         let skylines = vec![Skyline {
             x: 0,
@@ -46,39 +42,34 @@ impl SkylinePacker {
             w: width,
         }];
 
-        SkylinePacker {
+        Packer {
             config: config,
             border: Rect::new(0, 0, width, height),
             skylines: skylines,
         }
     }
 
-    pub fn pack(&mut self, (width, height): (u32, u32)) -> Option<Frame> {
-        let padded_width = width + self.config.texture_padding;
-        let padded_height = height + self.config.texture_padding;
+    pub fn pack(&mut self, (width, height): (u32, u32)) -> Option<Rect> {
+        let padded_width = width + self.config.rectangle_padding;
+        let padded_height = height + self.config.rectangle_padding;
 
         if let Some((i, mut rect)) = self.find_skyline(padded_width, padded_height) {
             self.split(i, &rect);
             self.merge();
 
-            let rotated = padded_width != rect.w;
-
-            rect.w -= self.config.texture_padding;
-            rect.h -= self.config.texture_padding;
+            rect.w -= self.config.rectangle_padding;
+            rect.h -= self.config.rectangle_padding;
             rect.x += self.config.border_padding;
             rect.y += self.config.border_padding;
 
-            Some(Frame {
-                frame: rect,
-                rotated: rotated,
-            })
+            Some(rect)
         } else {
             None
         }
     }
 
     pub fn can_pack(&self, (width, height): (u32, u32)) -> bool {
-        self.find_skyline(width + self.config.texture_padding, height + self.config.texture_padding).is_some()
+        self.find_skyline(width + self.config.rectangle_padding, height + self.config.rectangle_padding).is_some()
     }
 
     // return `rect` if rectangle (w, h) can fit the skyline started at `i`
