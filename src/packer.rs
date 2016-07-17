@@ -2,12 +2,10 @@ use std;
 use std::cmp::max;
 
 use {
-    TexturePackerConfig,
+    Config,
     Rect,
     Frame,
 };
-
-use packer::Packer;
 
 struct Skyline {
     pub x: u32,
@@ -27,8 +25,9 @@ impl Skyline {
     }
 }
 
+#[derive(Clone)]
 pub struct SkylinePacker {
-    config: TexturePackerConfig,
+    config: Config,
     border: Rect,
 
     // the skylines are sorted by their `x` position
@@ -36,19 +35,46 @@ pub struct SkylinePacker {
 }
 
 impl SkylinePacker {
-    pub fn new(config: TexturePackerConfig) -> SkylinePacker {
-        let mut skylines = Vec::new();
-        skylines.push(Skyline {
+    pub fn new(config: Config) -> SkylinePacker {
+        let skylines = vec![Skyline {
             x: 0,
             y: 0,
             w: config.max_width,
-        });
+        }];
 
         SkylinePacker {
             config: config,
             border: Rect::new(0, 0, config.max_width, config.max_height),
             skylines: skylines,
         }
+    }
+
+    pub fn pack(&mut self, (width, height): (u32, u32)) -> Option<Frame> {
+        let padded_width = width + self.config.texture_padding;
+        let padded_height = height + self.config.texture_padding;
+
+        if let Some((i, mut rect)) = self.find_skyline(padded_width, padded_height) {
+            self.split(i, &rect);
+            self.merge();
+
+            let rotated = padded_width != rect.w;
+
+            rect.w -= self.config.texture_padding;
+            rect.h -= self.config.texture_padding;
+            rect.x += self.config.border_padding;
+            rect.y += self.config.border_padding;
+
+            Some(Frame {
+                frame: rect,
+                rotated: rotated,
+            })
+        } else {
+            None
+        }
+    }
+
+    pub fn can_pack(&self, (width, height): (u32, u32)) -> bool {
+        self.find_skyline(width + self.config.texture_padding, height + self.config.texture_padding).is_some()
     }
 
     // return `rect` if rectangle (w, h) can fit the skyline started at `i`
@@ -80,7 +106,7 @@ impl SkylinePacker {
         for i in 0..self.skylines.len() {
             if let Some(r) = self.can_put(i, w, h) {
                 if r.bottom() < bottom ||
-                   (r.bottom() == bottom && self.skylines[i].w < width) {
+                    (r.bottom() == bottom && self.skylines[i].w < width) {
                     bottom = r.bottom();
                     width = self.skylines[i].w;
                     index = Some(i);
@@ -91,7 +117,7 @@ impl SkylinePacker {
             if self.config.allow_rotation {
                 if let Some(r) = self.can_put(i, h, w) {
                     if r.bottom() < bottom ||
-                       (r.bottom() == bottom && self.skylines[i].w < width) {
+                        (r.bottom() == bottom && self.skylines[i].w < width) {
                         bottom = r.bottom();
                         width = self.skylines[i].w;
                         index = Some(i);
@@ -149,37 +175,5 @@ impl SkylinePacker {
             }
             i += 1;
         }
-    }
-}
-
-impl Packer for SkylinePacker {
-    fn pack(&mut self, key: String, (original_width, original_height): (u32, u32)) -> Option<Frame> {
-        let mut width = original_width;
-        let mut height = original_height;
-
-        width += self.config.texture_padding;
-        height += self.config.texture_padding;
-
-        if let Some((i, mut rect)) = self.find_skyline(width, height) {
-            self.split(i, &rect);
-            self.merge();
-
-            let rotated = width != rect.w;
-
-            rect.w -= self.config.texture_padding;
-            rect.h -= self.config.texture_padding;
-
-            Some(Frame {
-                key: key,
-                frame: rect,
-                rotated: rotated,
-            })
-        } else {
-            None
-        }
-    }
-
-    fn can_pack(&self, (width, height): (u32, u32)) -> bool {
-        self.find_skyline(width + self.config.texture_padding, height + self.config.texture_padding).is_some()
     }
 }
