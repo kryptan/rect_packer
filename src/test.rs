@@ -24,6 +24,7 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
     let mut packer = Packer::new(config);
     let mut frames = Vec::new();
 
+    let allow_rotation = generator.gen();
     let rect = Rect::new(config.border_padding, config.border_padding, config.width - 2*config.border_padding, config.height - 2*config.border_padding);
 
     let mut num_failed_attempts = 0;
@@ -31,15 +32,16 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
         let w = generate_in_range(generator, 0, config.width + 1);
         let h = generate_in_range(generator, 0, config.height + 1);
 
-        if let Some(frame) = packer.pack(w, h) {
-            let rotated = frame.w != w;
 
-            assert!(config.allow_rotation || !rotated);
+        if let Some(frame) = packer.pack(w, h, allow_rotation) {
+            let rotated = frame.width != w;
+
+            assert!(allow_rotation || !rotated);
 
             if rotated {
-                assert!((frame.w, frame.h) == (h, w));
+                assert!((frame.width, frame.height) == (h, w));
             } else {
-                assert!((frame.w, frame.h) == (w, h));
+                assert!((frame.width, frame.height) == (w, h));
             }
 
             if !rect.contains(&frame) {
@@ -76,7 +78,7 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
         }
 
         std::fs::create_dir_all("target/generated-test-data").unwrap();
-        img.save(format!("target/generated-test-data/test_{}x{}_{}_{}_{}.png", config.width, config.height, config.allow_rotation, config.border_padding, config.rectangle_padding)).unwrap();
+        img.save(format!("target/generated-test-data/test_{}x{}_{}_{}_{}.png", config.width, config.height, allow_rotation, config.border_padding, config.rectangle_padding)).unwrap();
     }
 }
 
@@ -89,7 +91,6 @@ fn random_config<R : rand::Rng>(generator : &mut R) -> Config {
     Config {
         width: width,
         height: height,
-        allow_rotation: generator.gen(),
 
         border_padding: generate_in_range(generator, 0, min),
         rectangle_padding: generate_in_range(generator, 0, min),

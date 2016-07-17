@@ -1,18 +1,19 @@
-#[derive(Copy, Clone, Debug)]
+/// Rectangle with integer coordinates.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub struct Rect {
     pub x: i32,
     pub y: i32,
-    pub w: i32,
-    pub h: i32,
+    pub width: i32,
+    pub height: i32,
 }
 
 impl Rect {
-    pub fn new(x: i32, y: i32, w: i32, h: i32) -> Rect {
+    pub fn new(x: i32, y: i32, width: i32, height: i32) -> Rect {
         Rect {
             x: x,
             y: y,
-            w: w,
-            h: h,
+            width: width,
+            height: height,
         }
     }
 
@@ -23,7 +24,7 @@ impl Rect {
 
     #[inline(always)]
     pub fn bottom(&self) -> i32 {
-        self.y + self.h
+        self.y + self.height
     }
 
     #[inline(always)]
@@ -33,14 +34,15 @@ impl Rect {
 
     #[inline(always)]
     pub fn right(&self) -> i32 {
-        self.x + self.w
+        self.x + self.width
     }
 
     #[inline(always)]
     pub fn area(&self) -> i32 {
-        self.w * self.h
+        self.width * self.height
     }
 
+    /// Check if intersection of two rectangles is non empty.
     pub fn intersects(&self, other: &Rect) -> bool {
         self.contains_point(other.left(), other.top()) ||
         self.contains_point(other.left(), other.bottom() - 1) ||
@@ -52,6 +54,7 @@ impl Rect {
         other.contains_point(self.right() - 1, self.top())
     }
 
+    /// Check if `other` rectangle is completely inside `self`.
     pub fn contains(&self, other: &Rect) -> bool {
         self.left() <= other.left() &&
         self.right() >= other.right() &&
@@ -59,6 +62,7 @@ impl Rect {
         self.bottom() >= other.bottom()
     }
 
+    /// Check if given pixel is inside this rectangle.
     pub fn contains_point(&self, x: i32, y: i32) -> bool {
         self.left() <= x && x < self.right() &&
         self.top() <= y && y < self.bottom()

@@ -24,7 +24,6 @@ impl Skyline {
 
 #[derive(Clone)]
 pub struct Packer {
-    allow_rotation: bool,
     border: Rect,
 
     // the skylines are sorted by their `x` position
@@ -32,7 +31,7 @@ pub struct Packer {
 }
 
 impl Packer {
-    pub fn new(width : i32, height : i32, allow_rotation : bool) -> Packer {
+    pub fn new(width : i32, height : i32) -> Packer {
         let width = max(0, width);
         let height = max(0, height);
 
@@ -43,18 +42,17 @@ impl Packer {
         }];
 
         Packer {
-            allow_rotation: allow_rotation,
             border: Rect::new(0, 0, width, height),
             skylines: skylines,
         }
     }
 
-    pub fn pack(&mut self, width : i32, height : i32) -> Option<Rect> {
+    pub fn pack(&mut self, width : i32, height : i32, allow_rotation : bool) -> Option<Rect> {
         if width <= 0 || height <= 0 {
             return None
         }
 
-        if let Some((i, rect)) = self.find_skyline(width, height) {
+        if let Some((i, rect)) = self.find_skyline(width, height, allow_rotation) {
             self.split(i, &rect);
             self.merge();
 
@@ -64,14 +62,14 @@ impl Packer {
         }
     }
 
-    pub fn can_pack(&self, width : i32, height : i32) -> bool {
-        self.find_skyline(width, height).is_some()
+    pub fn can_pack(&self, width : i32, height : i32, allow_rotation : bool) -> bool {
+        self.find_skyline(width, height, allow_rotation).is_some()
     }
 
     // return `rect` if rectangle (w, h) can fit the skyline started at `i`
     fn can_put(&self, mut i: usize, w: i32, h: i32) -> Option<Rect> {
         let mut rect = Rect::new(self.skylines[i].x, 0, w, h);
-        let mut width_left = rect.w;
+        let mut width_left = rect.width;
         loop {
             rect.y = max(rect.y, self.skylines[i].y);
             // the source rect is too large
@@ -87,7 +85,7 @@ impl Packer {
         }
     }
 
-    fn find_skyline(&self, w: i32, h: i32) -> Option<(usize, Rect)> {
+    fn find_skyline(&self, w: i32, h: i32, allow_rotation : bool) -> Option<(usize, Rect)> {
         let mut bottom = std::i32::MAX;
         let mut width = std::i32::MAX;
         let mut index = None;
@@ -105,7 +103,7 @@ impl Packer {
                 }
             }
 
-            if self.allow_rotation {
+            if allow_rotation {
                 if let Some(r) = self.can_put(i, h, w) {
                     if r.bottom() < bottom ||
                         (r.bottom() == bottom && self.skylines[i].w < width) {
@@ -129,7 +127,7 @@ impl Packer {
         let skyline = Skyline {
             x: rect.left(),
             y: rect.bottom(),
-            w: rect.w,
+            w: rect.width,
         };
 
         assert!(skyline.right() <= self.border.right());

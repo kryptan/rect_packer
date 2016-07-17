@@ -13,7 +13,8 @@ mod packer;
 #[cfg(test)]
 mod test;
 
-#[derive(Copy, Clone, Debug)]
+/// Describes size and padding requirements of rectangle packing.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub struct Config {
     /// Width of the encompassing rectangle.
     pub width: i32,
@@ -24,7 +25,4 @@ pub struct Config {
     pub border_padding: i32,
     /// Minimum spacing between rectangles.
     pub rectangle_padding: i32,
-
-    /// Allow 90° rotation of the input rectangles.
-    pub allow_rotation: bool,
 }
