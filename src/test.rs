@@ -32,7 +32,6 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
         let w = generate_in_range(generator, 0, config.width + 1);
         let h = generate_in_range(generator, 0, config.height + 1);
 
-
         if let Some(frame) = packer.pack(w, h, allow_rotation) {
             let rotated = frame.width != w;
 
