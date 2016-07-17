@@ -16,15 +16,6 @@ impl Rect {
         }
     }
 
-    pub fn new_with_points(x1: u32, y1: u32, x2: u32, y2: u32) -> Rect {
-        Rect {
-            x: x1,
-            y: y1,
-            w: x2 - x1 + 1,
-            h: y2 - y1 + 1,
-        }
-    }
-
     #[inline(always)]
     pub fn top(&self) -> u32 {
         self.y
@@ -32,7 +23,7 @@ impl Rect {
 
     #[inline(always)]
     pub fn bottom(&self) -> u32 {
-        self.y + self.h - 1
+        self.y + self.h
     }
 
     #[inline(always)]
@@ -42,7 +33,7 @@ impl Rect {
 
     #[inline(always)]
     pub fn right(&self) -> u32 {
-        self.x + self.w - 1
+        self.x + self.w
     }
 
     #[inline(always)]
@@ -51,10 +42,14 @@ impl Rect {
     }
 
     pub fn intersects(&self, other: &Rect) -> bool {
-        self.left() < other.right() &&
-        self.right() > other.left() &&
-        self.top() < other.bottom() &&
-        self.bottom() > other.top()
+        self.contains_point(other.left(), other.top()) ||
+        self.contains_point(other.left(), other.bottom() - 1) ||
+        self.contains_point(other.right() - 1, other.bottom() - 1) ||
+        self.contains_point(other.right() - 1, other.top()) ||
+        other.contains_point(self.left(), self.top()) ||
+        other.contains_point(self.left(), self.bottom() - 1) ||
+        other.contains_point(self.right() - 1, self.bottom() - 1) ||
+        other.contains_point(self.right() - 1, self.top())
     }
 
     pub fn contains(&self, other: &Rect) -> bool {
@@ -65,79 +60,7 @@ impl Rect {
     }
 
     pub fn contains_point(&self, x: u32, y: u32) -> bool {
-        self.left() <= x &&
-        self.right() >= x &&
-        self.top() <= y &&
-        self.bottom() >= y
-    }
-
-    pub fn is_outline(&self, x: u32, y: u32) -> bool {
-        x == self.left() || x == self.right() || y == self.top() || y == self.bottom()
-    }
-
-    pub fn crop(&self, other: &Rect) -> Vec<Rect> {
-        if !self.intersects(other) {
-            return vec!(self.clone());
-        }
-
-        let inside_x1 = if other.left() < self.left() {
-            self.left()
-        } else {
-            other.left()
-        };
-
-        let inside_y1 = if other.top() < self.top() {
-            self.top()
-        } else {
-            other.top()
-        };
-
-        let inside_x2 = if other.right() > self.right() {
-            self.right()
-        } else {
-            other.right()
-        };
-
-        let inside_y2 = if other.bottom() > self.bottom() {
-            self.bottom()
-        } else {
-            other.bottom()
-        };
-
-        //
-        // *******************
-        // *    | r3  |      *
-        // *    |     |      *
-        // *    +++++++      *
-        // * r1 +     +      *
-        // *    +     +  r2  *
-        // *    +++++++      *
-        // *    |     |      *
-        // *    | r4  |      *
-        // *******************
-        //
-        let mut result = Vec::new();
-
-        let r1 = Rect::new_with_points(self.left(), self.top(), inside_x1, self.bottom());
-        if r1.area() > 0 {
-            result.push(r1);
-        }
-
-        let r2 = Rect::new_with_points(inside_x2, self.top(), self.right(), self.bottom());
-        if r2.area() > 0 {
-            result.push(r2);
-        }
-
-        let r3 = Rect::new_with_points(inside_x1, self.top(), inside_x2, inside_y1);
-        if r3.area() > 0 {
-            result.push(r3);
-        }
-
-        let r4 = Rect::new_with_points(inside_x1, inside_y2, inside_x2, self.bottom());
-        if r4.area() > 0 {
-            result.push(r4);
-        }
-
-        result
+        self.left() <= x && x < self.right() &&
+        self.top() <= y && y < self.bottom()
     }
 }

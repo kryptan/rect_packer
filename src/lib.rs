@@ -1,8 +1,17 @@
+#[cfg(test)]
+extern crate rand;
+
+#[cfg(test)]
+extern crate image;
+
 pub use rect::Rect;
 pub use packer::SkylinePacker;
 
 mod rect;
 mod packer;
+
+#[cfg(test)]
+mod test;
 
 #[derive(Clone, Debug)]
 pub struct Frame {
@@ -16,9 +25,9 @@ pub struct Config {
     // layout configuration
     //
     /// Max width of the packed image.
-    pub max_width: u32,
+    pub width: u32,
     /// Max height of the packed image.
-    pub max_height: u32,
+    pub height: u32,
     /// Allow rotation (90°) of the input images.
     pub allow_rotation: bool,
 
