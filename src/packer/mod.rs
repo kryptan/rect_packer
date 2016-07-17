@@ -8,8 +8,6 @@ pub use self::skyline_packer::SkylinePacker;
 mod skyline_packer;
 
 pub trait Packer {
-    type Pixel;
-
-    fn pack(&mut self, key: String, texture: &Texture<Pixel = Self::Pixel>) -> Option<Frame>;
-    fn can_pack(&self, texture: &Texture<Pixel = Self::Pixel>) -> bool;
+    fn pack(&mut self, key: String, texture: &Texture) -> Option<Frame>;
+    fn can_pack(&self, texture: &Texture) -> bool;
 }

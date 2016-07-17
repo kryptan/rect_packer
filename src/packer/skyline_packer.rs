@@ -160,9 +160,7 @@ impl<P> SkylinePacker<P> {
 }
 
 impl<P> Packer for SkylinePacker<P> {
-    type Pixel = P;
-
-    fn pack(&mut self, key: String, texture: &Texture<Pixel=P>) -> Option<Frame> {
+    fn pack(&mut self, key: String, texture: &Texture) -> Option<Frame> {
         let mut width = texture.width();
         let mut height = texture.height();
 
@@ -195,7 +193,7 @@ impl<P> Packer for SkylinePacker<P> {
         }
     }
 
-    fn can_pack(&self, texture: &Texture<Pixel=P>) -> bool {
+    fn can_pack(&self, texture: &Texture) -> bool {
         self.find_skyline(texture.width() + self.config.texture_padding, texture.height() + self.config.texture_padding).is_some()
     }
 }

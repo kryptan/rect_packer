@@ -11,7 +11,6 @@ pub struct RGBA8 {
 }
 
 pub struct MemoryRGBA8Texture {
-    pixels: Vec<RGBA8>,
     width: u32,
     height: u32,
 }
@@ -30,39 +29,18 @@ impl MemoryRGBA8Texture {
         }
 
         MemoryRGBA8Texture {
-            pixels: pixels,
             width: w,
             height: h,
         }
     }
-
-    #[inline(always)]
-    fn index_for(&self, x: u32, y: u32) -> usize {
-        (y * self.width + x) as usize
-    }
 }
 
 impl Texture for MemoryRGBA8Texture {
-    type Pixel = RGBA8;
-
     fn width(&self) -> u32 {
         self.width
     }
 
     fn height(&self) -> u32 {
         self.height
-    }
-
-    fn get(&self, x: u32, y: u32) -> Option<RGBA8> {
-        if let Some(p) = self.pixels.get(self.index_for(x, y)) {
-            Some(*p)
-        } else {
-            None
-        }
-    }
-
-    fn set(&mut self, x: u32, y: u32, val: RGBA8) {
-        let index = self.index_for(x, y);
-        self.pixels[index] = val;
     }
 }

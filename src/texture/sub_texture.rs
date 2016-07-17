@@ -1,56 +1,33 @@
-use std::borrow::Cow;
-
 use rect::Rect;
 
 use super::Texture;
 
-pub struct SubTexture<'a, T: 'a + Clone> {
-    texture: Cow<'a, T>,
+pub struct SubTexture {
     source: Rect,
 }
 
-impl<'a, T: Texture + Clone> SubTexture<'a, T> {
-    pub fn new(texture: T, source: Rect) -> SubTexture<'a, T> {
+impl SubTexture {
+    pub fn new(source: Rect) -> SubTexture {
         SubTexture {
-            texture: Cow::Owned(texture),
             source: source,
         }
     }
 
-    pub fn from_ref(texture: &'a T, source: Rect) -> SubTexture<'a, T> {
+    pub fn from_ref(source: Rect) -> SubTexture {
         SubTexture {
-            texture: Cow::Borrowed(texture),
             source: source,
         }
     }
 
 }
 
-impl<'a, T: Texture + Clone> Texture for SubTexture<'a, T> {
-    type Pixel = T::Pixel;
-
+impl Texture for SubTexture {
     fn width(&self) -> u32 {
         self.source.w
     }
 
     fn height(&self) -> u32 {
         self.source.h
-    }
-
-    fn get(&self, x: u32, y: u32) -> Option<T::Pixel> {
-        let x = self.source.x + x;
-        let y = self.source.y + y;
-        self.texture.get(x, y)
-    }
-
-    fn set(&mut self, x: u32, y: u32, val: T::Pixel) {
-        if let Cow::Owned(ref mut t) = self.texture {
-            let x = self.source.x + x;
-            let y = self.source.y + y;
-            t.set(x, y, val);
-        } else {
-            panic!("Can't set pixel by borrowed reference");
-        }
     }
 }
 

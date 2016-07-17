@@ -17,15 +17,15 @@ use packer::{
     SkylinePacker,
 };
 
-pub struct TexturePacker<'a, T: 'a + Clone, P> {
-    textures: HashMap<String, SubTexture<'a, T>>,
+pub struct TexturePacker<P> {
+    textures: HashMap<String, SubTexture>,
     frames: HashMap<String, Frame>,
     packer: P,
     config: TexturePackerConfig,
 }
 
-impl <'a, Pix, T: 'a + Clone + Texture<Pixel=Pix>> TexturePacker<'a, T, SkylinePacker<Pix>> {
-    pub fn new_skyline(config: TexturePackerConfig) -> TexturePacker<'a, T, SkylinePacker<Pix>> {
+impl <'a, Pix> TexturePacker<SkylinePacker<Pix>> {
+    pub fn new_skyline(config: TexturePackerConfig) -> TexturePacker<SkylinePacker<Pix>> {
         TexturePacker {
             textures: HashMap::new(),
             frames: HashMap::new(),
@@ -35,8 +35,8 @@ impl <'a, Pix, T: 'a + Clone + Texture<Pixel=Pix>> TexturePacker<'a, T, SkylineP
     }
 }
 
-impl<'a, Pix, P: Packer<Pixel=Pix>, T: Clone + Texture<Pixel=Pix>> TexturePacker<'a, T, P> {
-    pub fn pack_ref(&mut self, key: String, texture: &'a T) {
+impl<'a, P: Packer> TexturePacker<P> {
+    pub fn pack_ref<T: Clone + Texture>(&mut self, key: String, texture: &'a T) {
         let (w, h) = (texture.width(), texture.height());
         let source = if self.config.trim {
             trim_texture(texture)
@@ -44,7 +44,7 @@ impl<'a, Pix, P: Packer<Pixel=Pix>, T: Clone + Texture<Pixel=Pix>> TexturePacker
             Rect::new(0, 0, w, h)
         };
 
-        let texture = SubTexture::from_ref(texture, source);
+        let texture = SubTexture::from_ref(source);
         if let Some(mut frame) = self.packer.pack(key.clone(), &texture) {
             frame.frame.x += self.config.border_padding;
             frame.frame.y += self.config.border_padding;
@@ -58,7 +58,7 @@ impl<'a, Pix, P: Packer<Pixel=Pix>, T: Clone + Texture<Pixel=Pix>> TexturePacker
         self.textures.insert(key, texture);
     }
 
-    pub fn pack_own(&mut self, key: String, texture: T) {
+    pub fn pack_own<T: Clone + Texture>(&mut self, key: String, texture: T) {
         let (w, h) = (texture.width(), texture.height());
         let source = if self.config.trim {
             trim_texture(&texture)
@@ -66,7 +66,7 @@ impl<'a, Pix, P: Packer<Pixel=Pix>, T: Clone + Texture<Pixel=Pix>> TexturePacker
             Rect::new(0, 0, w, h)
         };
 
-        let texture = SubTexture::new(texture, source);
+        let texture = SubTexture::new(source);
         if let Some(mut frame) = self.packer.pack(key.clone(), &texture) {
             frame.frame.x += self.config.border_padding;
             frame.frame.y += self.config.border_padding;
@@ -91,21 +91,10 @@ impl<'a, Pix, P: Packer<Pixel=Pix>, T: Clone + Texture<Pixel=Pix>> TexturePacker
             None
         }
     }
-
-    fn get_frame_at(&self, x: u32, y: u32) -> Option<&Frame> {
-        for (_, frame) in self.frames.iter() {
-            if frame.frame.contains_point(x, y) {
-                return Some(frame);
-            }
-        }
-        None
-    }
 }
 
-impl<'a, Pix, P, T: Clone> Texture for  TexturePacker<'a, T, P>
-where P: Packer<Pixel=Pix>, T:  Texture<Pixel=Pix> {
-    type Pixel = Pix;
-
+impl<'a, P> Texture for  TexturePacker<P>
+where P: Packer {
     fn width(&self) -> u32 {
         let mut right = None;
 
@@ -144,27 +133,6 @@ where P: Packer<Pixel=Pix>, T:  Texture<Pixel=Pix> {
         } else {
             0
         }
-    }
-
-    fn get(&self, x: u32, y: u32) -> Option<Pix> {
-        if let Some(frame) = self.get_frame_at(x, y) {
-            if let Some(texture) = self.textures.get(&frame.key) {
-                let x = x - frame.frame.x;
-                let y = y - frame.frame.y;
-
-                return if frame.rotated {
-                    texture.get_rotated(x, y)
-                } else {
-                    texture.get(x, y)
-                };
-            }
-        }
-
-        None
-    }
-
-    fn set(&mut self, _x: u32, _y: u32, _val: Pix) {
-        panic!("Can't set pixel directly");
     }
 }
 
