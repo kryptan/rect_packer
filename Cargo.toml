@@ -8,7 +8,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/kryptan/rect_packer.git"
 homepage = "https://github.com/kryptan/rect_packer"
-documentation = "https://kryptan.github.io/rect_packer/target/doc/rect_packer"
+documentation = "https://docs.rs/rect_packer/"
 
 [lib]
 name = "rect_packer"

@@ -4,7 +4,7 @@ Pack multiple rectangles into a larger one. Can be used for packing sprites into
 texture for 2d games. Uses skyline heuristic. Heavily tested with random data to ensure
 that it always produces correct result.
 
-[Documentation](https://kryptan.github.io/rect_packer/target/doc/rect_packer)
+[Documentation](https://docs.rs/rect_packer/)
 
 [Crates.io package](https://crates.io/crates/rect_packer)
 
