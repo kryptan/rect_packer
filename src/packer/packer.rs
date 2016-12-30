@@ -5,26 +5,22 @@ use Rect;
 
 #[derive(Clone)]
 struct Skyline {
-    pub x: i32,
+    pub left: i32,
     pub y: i32,
-    pub w: i32,
+    pub width: i32,
 }
 
 impl Skyline {
     #[inline(always)]
-    pub fn left(&self) -> i32 {
-        self.x
-    }
-
-    #[inline(always)]
     pub fn right(&self) -> i32 {
-        self.x + self.w
+        self.left + self.width
     }
 }
 
 #[derive(Clone)]
 pub struct Packer {
-    border: Rect,
+    width: i32,
+    height: i32,
 
     // the skylines are sorted by their `x` position
     skylines: Vec<Skyline>,
@@ -36,13 +32,14 @@ impl Packer {
         let height = max(0, height);
 
         let skylines = vec![Skyline {
-            x: 0,
+            left: 0,
             y: 0,
-            w: width,
+            width: width,
         }];
 
         Packer {
-            border: Rect::new(0, 0, width, height),
+            width: width,
+            height: height,
             skylines: skylines,
         }
     }
@@ -68,18 +65,18 @@ impl Packer {
 
     // return `rect` if rectangle (w, h) can fit the skyline started at `i`
     fn can_put(&self, mut i: usize, w: i32, h: i32) -> Option<Rect> {
-        let mut rect = Rect::new(self.skylines[i].x, 0, w, h);
+        let mut rect = Rect::new(self.skylines[i].left, 0, w, h);
         let mut width_left = rect.width;
         loop {
             rect.y = max(rect.y, self.skylines[i].y);
             // the source rect is too large
-            if !self.border.contains(&rect) {
+            if !Rect::new(0, 0, self.width, self.height).contains(&rect) {
                 return None;
             }
-            if self.skylines[i].w >= width_left {
+            if self.skylines[i].width >= width_left {
                 return Some(rect);
             }
-            width_left -= self.skylines[i].w;
+            width_left -= self.skylines[i].width;
             i += 1;
             assert!(i < self.skylines.len());
         }
@@ -95,9 +92,9 @@ impl Packer {
         for i in 0..self.skylines.len() {
             if let Some(r) = self.can_put(i, w, h) {
                 if r.bottom() < bottom ||
-                    (r.bottom() == bottom && self.skylines[i].w < width) {
+                    (r.bottom() == bottom && self.skylines[i].width < width) {
                     bottom = r.bottom();
-                    width = self.skylines[i].w;
+                    width = self.skylines[i].width;
                     index = Some(i);
                     rect = r;
                 }
@@ -106,9 +103,9 @@ impl Packer {
             if allow_rotation {
                 if let Some(r) = self.can_put(i, h, w) {
                     if r.bottom() < bottom ||
-                        (r.bottom() == bottom && self.skylines[i].w < width) {
+                        (r.bottom() == bottom && self.skylines[i].width < width) {
                         bottom = r.bottom();
-                        width = self.skylines[i].w;
+                        width = self.skylines[i].width;
                         index = Some(i);
                         rect = r;
                     }
@@ -125,29 +122,29 @@ impl Packer {
 
     fn split(&mut self, i: usize, rect: &Rect) {
         let skyline = Skyline {
-            x: rect.left(),
+            left: rect.left(),
             y: rect.bottom(),
-            w: rect.width,
+            width: rect.width,
         };
 
-        assert!(skyline.right() <= self.border.right());
-        assert!(skyline.y <= self.border.bottom());
+        assert!(skyline.right() <= self.width);
+        assert!(skyline.y <= self.height);
 
         self.skylines.insert(i, skyline);
 
         while i + 1 < self.skylines.len() {
-            assert!(self.skylines[i].left() <= self.skylines[i + 1].left());
+            assert!(self.skylines[i].left <= self.skylines[i + 1].left);
 
-            if self.skylines[i + 1].left() >= self.skylines[i].right() {
+            if self.skylines[i + 1].left >= self.skylines[i].right() {
                 break;
             }
 
-            let shrink = self.skylines[i].right() - self.skylines[i + 1].left();
-            if self.skylines[i + 1].w <= shrink {
+            let shrink = self.skylines[i].right() - self.skylines[i + 1].left;
+            if self.skylines[i + 1].width <= shrink {
                 self.skylines.remove(i + 1);
             } else {
-                self.skylines[i + 1].x += shrink;
-                self.skylines[i + 1].w -= shrink;
+                self.skylines[i + 1].left += shrink;
+                self.skylines[i + 1].width -= shrink;
                 break;
             }
         }
@@ -157,7 +154,7 @@ impl Packer {
         let mut i = 1;
         while i < self.skylines.len() {
             if self.skylines[i - 1].y == self.skylines[i].y {
-                self.skylines[i - 1].w += self.skylines[i].w;
+                self.skylines[i - 1].width += self.skylines[i].width;
                 self.skylines.remove(i);
             } else {
                 i += 1;
