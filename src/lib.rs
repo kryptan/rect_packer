@@ -30,6 +30,7 @@ extern crate image;
 
 pub use rect::Rect;
 pub use packer::Packer;
+pub use packer::TightPacker;
 
 mod rect;
 mod packer;

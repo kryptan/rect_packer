@@ -3,11 +3,13 @@ use {Config, Rect};
 
 mod packer;
 
+pub use self::packer::TightPacker;
+
 /// `Packer` is the main structure in this crate. It holds packing context.
 #[derive(Clone)]
 pub struct Packer {
     config: Config,
-    packer : packer::Packer,
+    packer : TightPacker,
 }
 
 impl Packer {
@@ -18,7 +20,7 @@ impl Packer {
 
         Packer {
             config: config,
-            packer: packer::Packer::new(width, height),
+            packer: TightPacker::new(width, height),
         }
     }
 
@@ -44,7 +46,7 @@ impl Packer {
         }
     }
 
-    /// Check if rectangle with the specified size can be added. This is equivalent to `.pack(width, height, allow_rotation).is_some()` but faster.
+    /// Check if rectangle with the specified size can be added.
     pub fn can_pack(&self, width : i32, height : i32, allow_rotation : bool) -> bool {
         self.packer.can_pack(width + self.config.rectangle_padding, height + self.config.rectangle_padding, allow_rotation)
     }

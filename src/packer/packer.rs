@@ -17,8 +17,9 @@ impl Skyline {
     }
 }
 
+/// Similar to `Packer` but does not add any padding between rectangles.
 #[derive(Clone)]
-pub struct Packer {
+pub struct TightPacker {
     width: i32,
     height: i32,
 
@@ -26,8 +27,9 @@ pub struct Packer {
     skylines: Vec<Skyline>,
 }
 
-impl Packer {
-    pub fn new(width : i32, height : i32) -> Packer {
+impl TightPacker {
+    /// Create new empty `TightPacker` with the provided parameters.
+    pub fn new(width : i32, height : i32) -> TightPacker {
         let width = max(0, width);
         let height = max(0, height);
 
@@ -37,13 +39,18 @@ impl Packer {
             width: width,
         }];
 
-        Packer {
+        TightPacker {
             width: width,
             height: height,
             skylines: skylines,
         }
     }
 
+    /// Pack new rectangle. Returns position of newly added rectangle. If there is not enough space returns `None`.
+    /// If it returns `None` you can still try to add smaller rectangles.
+    ///
+    /// `allow_rotation` - allow 90° rotation of the input rectangle. You can detect whether rectangle was rotated by comparing
+    /// returned `width` and `height` with the supplied ones.
     pub fn pack(&mut self, width : i32, height : i32, allow_rotation : bool) -> Option<Rect> {
         if width <= 0 || height <= 0 {
             return None
@@ -59,6 +66,7 @@ impl Packer {
         }
     }
 
+    /// Check if rectangle with the specified size can be added.
     pub fn can_pack(&self, width : i32, height : i32, allow_rotation : bool) -> bool {
         self.find_skyline(width, height, allow_rotation).is_some()
     }
