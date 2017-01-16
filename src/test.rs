@@ -56,7 +56,7 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
         }
     }
 
-    if generate_images {
+    if generate_images && config.width != 0 && config.height != 0 {
         let mut img = image::ImageBuffer::<image::Rgb<u8>, _>::new(config.width as u32, config.height as u32);
 
         for i in 0..frames.len() {
@@ -71,6 +71,8 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
                 }
             }
         }
+
+        println!("{} {}", config.width, config.height);
 
         std::fs::create_dir_all("target/generated-test-data").unwrap();
         img.save(format!("target/generated-test-data/test_{}x{}_{}_{}_{}.png", config.width, config.height, allow_rotation, config.border_padding, config.rectangle_padding)).unwrap();

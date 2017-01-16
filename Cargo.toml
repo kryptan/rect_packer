@@ -14,5 +14,5 @@ documentation = "https://docs.rs/rect_packer/"
 name = "rect_packer"
 
 [dev-dependencies]
-rand = "0.3.14"
-image = "0.10.1"
+rand = "0.3.15"
+image = "0.12.1"
