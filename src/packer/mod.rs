@@ -3,13 +3,13 @@ use {Config, Rect};
 
 mod packer;
 
-pub use self::packer::TightPacker;
+pub use self::packer::DensePacker;
 
 /// `Packer` is the main structure in this crate. It holds packing context.
 #[derive(Clone)]
 pub struct Packer {
     config: Config,
-    packer : TightPacker,
+    packer : DensePacker,
 }
 
 impl Packer {
@@ -20,11 +20,16 @@ impl Packer {
 
         Packer {
             config: config,
-            packer: TightPacker::new(width, height),
+            packer: DensePacker::new(width, height),
         }
     }
 
-    /// Pack new rectangle. Returns position of newly added rectangle. If there is not enough space returns `None`.
+    /// Get config that this packer was created with.
+    pub fn config(&self) -> Config {
+        self.config
+    }
+
+    /// Pack new rectangle. Returns position of the newly added rectangle. If there is not enough space returns `None`.
     /// If it returns `None` you can still try to add smaller rectangles.
     ///
     /// `allow_rotation` - allow 90° rotation of the input rectangle. You can detect whether rectangle was rotated by comparing

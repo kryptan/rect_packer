@@ -1,3 +1,5 @@
+//! Pack small rectangles into a larger one. This is useful for creating texture atlases for the efficient GPU rendering.
+//!
 //! Usage example:
 //!
 //! ```
@@ -16,7 +18,7 @@
 //! let mut packer = Packer::new(config);
 //! for &(width, height) in &rectangles {
 //!     if let Some(rect) = packer.pack(width, height, false) {
-//!         println!("Rectangle is at position ({}, {}) within encompassing rectangle",
+//!         println!("Rectangle is at position ({}, {}) within the encompassing rectangle",
 //!             rect.x,
 //!             rect.y);
 //!     }
@@ -30,7 +32,7 @@ extern crate image;
 
 pub use rect::Rect;
 pub use packer::Packer;
-pub use packer::TightPacker;
+pub use packer::DensePacker;
 
 mod rect;
 mod packer;

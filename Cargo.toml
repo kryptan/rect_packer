@@ -1,8 +1,8 @@
 [package]
 name = "rect_packer"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["kryptan"]
-keywords = ["texture", "packer", "sprite", "packing", "rectangle"]
+keywords = ["texture", "packer", "sprite", "packing", "atlas"]
 description = "A rectangle packing library. Heavily tested with random data to ensure that it always produces correct result."
 license = "MIT"
 readme = "README.md"
@@ -15,4 +15,4 @@ name = "rect_packer"
 
 [dev-dependencies]
 rand = "0.3.15"
-image = "0.12.1"
+image = "0.12.3"

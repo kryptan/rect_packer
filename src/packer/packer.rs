@@ -19,7 +19,7 @@ impl Skyline {
 
 /// Similar to `Packer` but does not add any padding between rectangles.
 #[derive(Clone)]
-pub struct TightPacker {
+pub struct DensePacker {
     width: i32,
     height: i32,
 
@@ -27,9 +27,9 @@ pub struct TightPacker {
     skylines: Vec<Skyline>,
 }
 
-impl TightPacker {
-    /// Create new empty `TightPacker` with the provided parameters.
-    pub fn new(width : i32, height : i32) -> TightPacker {
+impl DensePacker {
+    /// Create new empty `DensePacker` with the provided parameters.
+    pub fn new(width : i32, height : i32) -> DensePacker {
         let width = max(0, width);
         let height = max(0, height);
 
@@ -39,14 +39,19 @@ impl TightPacker {
             width: width,
         }];
 
-        TightPacker {
+        DensePacker {
             width: width,
             height: height,
             skylines: skylines,
         }
     }
 
-    /// Pack new rectangle. Returns position of newly added rectangle. If there is not enough space returns `None`.
+    /// Get size that this packer was created with.
+    pub fn size(&self) -> (i32, i32) {
+        (self.width, self.height)
+    }
+
+    /// Pack new rectangle. Returns position of the newly added rectangle. If there is not enough space returns `None`.
     /// If it returns `None` you can still try to add smaller rectangles.
     ///
     /// `allow_rotation` - allow 90° rotation of the input rectangle. You can detect whether rectangle was rotated by comparing
