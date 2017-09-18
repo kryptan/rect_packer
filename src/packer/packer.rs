@@ -51,6 +51,23 @@ impl DensePacker {
         (self.width, self.height)
     }
 
+    /// Set new size for this packer
+    pub fn resize(&mut self, width: i32, height: i32) {
+        assert!(width >= self.width && height >= self.height);
+
+        self.width = width;
+        self.height = height;
+
+        // Add a new skyline to fill the gap
+        // The new skyline starts where the furthest one ends
+        let left = self.skylines.last().unwrap().right();
+        self.skylines.push(Skyline {
+            left: left,
+            y: 0,
+            width: width - left,
+        });
+    }
+
     /// Pack new rectangle. Returns position of the newly added rectangle. If there is not enough space returns `None`.
     /// If it returns `None` you can still try to add smaller rectangles.
     ///
