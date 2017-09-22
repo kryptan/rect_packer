@@ -51,7 +51,9 @@ impl DensePacker {
         (self.width, self.height)
     }
 
-    /// Set new size for this packer
+    /// Set new size for this packer.
+    ///
+    /// New size should be not less than the current size.
     pub fn resize(&mut self, width: i32, height: i32) {
         assert!(width >= self.width && height >= self.height);
 

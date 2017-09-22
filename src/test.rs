@@ -1,22 +1,22 @@
 use std;
 use rand;
 use image;
-use {Config, Packer, Rect};
+use {Config, Packer, DensePacker, Rect};
 
 
-fn generate_in_range<R : rand::Rng>(generator : &mut R, min : i32, max : i32) -> i32 {
+fn generate_in_range<R : rand::Rng>(generator : &mut R, max : i32) -> i32 {
     // to ensure that edge cases are tested generate them with higher probability
     if generator.gen_weighted_bool(10) {
         0
     } else if generator.gen_weighted_bool(10) {
         max - 1
-    } else if min >= max {
-        min
+    } else if 0 >= max {
+        0
     } else if generator.gen_weighted_bool(4) {
-        generator.gen_range(min, max)
+        generator.gen_range(0, max)
     } else {
-        let new_max = std::cmp::max(min + 1, (max - min)/7);
-        generator.gen_range(min, new_max)
+        let new_max = std::cmp::max(1, max/7);
+        generator.gen_range(0, new_max)
     }
 }
 
@@ -29,8 +29,8 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
 
     let mut num_failed_attempts = 0;
     while num_failed_attempts < 20 {
-        let w = generate_in_range(generator, 0, config.width + 1);
-        let h = generate_in_range(generator, 0, config.height + 1);
+        let w = generate_in_range(generator, config.width + 1);
+        let h = generate_in_range(generator, config.height + 1);
 
         if let Some(frame) = packer.pack(w, h, allow_rotation) {
             let rotated = frame.width != w;
@@ -72,10 +72,56 @@ fn test_config<R : rand::Rng>(generator : &mut R, config : Config, generate_imag
             }
         }
 
-        println!("{} {}", config.width, config.height);
-
         std::fs::create_dir_all("target/generated-test-data").unwrap();
         img.save(format!("target/generated-test-data/test_{}x{}_{}_{}_{}.png", config.width, config.height, allow_rotation, config.border_padding, config.rectangle_padding)).unwrap();
+    }
+}
+
+fn test_size<R: rand::Rng>(generator: &mut R, mut width: i32, mut height: i32) {
+    let mut packer = DensePacker::new(width, height);
+    let mut frames = Vec::new();
+
+    let allow_rotation = generator.gen();
+
+    let mut num_failed_attempts = 0;
+    let mut num_resizes = 0;
+    while num_failed_attempts < 20 {
+        let w = generate_in_range(generator, width + 1);
+        let h = generate_in_range(generator, height + 1);
+
+        if generator.gen_weighted_bool(10) && num_resizes < 3 {
+            num_resizes += 1;
+
+            width += generate_in_range(generator, 100);
+            height += generate_in_range(generator, 100);
+
+            packer.resize(width, height);
+        }
+
+        let rect = Rect::new(0, 0, width, height);
+
+        if let Some(frame) = packer.pack(w, h, allow_rotation) {
+            let rotated = frame.width != w;
+
+            assert!(allow_rotation || !rotated);
+
+            if rotated {
+                assert!((frame.width, frame.height) == (h, w));
+            } else {
+                assert!((frame.width, frame.height) == (w, h));
+            }
+
+            assert!(rect.contains(&frame));
+
+            for other_frame in &frames {
+                let f : &Rect = other_frame;
+                assert!(!f.intersects(&frame));
+            }
+
+            frames.push(frame);
+        } else {
+            num_failed_attempts += 1;
+        }
     }
 }
 
@@ -89,8 +135,8 @@ fn random_config<R : rand::Rng>(generator : &mut R) -> Config {
         width: width,
         height: height,
 
-        border_padding: generate_in_range(generator, 0, min),
-        rectangle_padding: generate_in_range(generator, 0, min),
+        border_padding: generate_in_range(generator, min),
+        rectangle_padding: generate_in_range(generator, min),
     }
 }
 
@@ -100,6 +146,7 @@ fn test(n : u32, generate_images : bool) {
     for _ in 0..n {
         let config = random_config(&mut generator);
         test_config(&mut generator, config, generate_images);
+        test_size(&mut generator, config.width, config.height);
     }
 }
 
