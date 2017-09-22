@@ -1,6 +1,6 @@
 [package]
 name = "rect_packer"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["kryptan"]
 keywords = ["texture", "packer", "sprite", "packing", "atlas"]
 description = "A rectangle packing library. Heavily tested with random data to ensure that it always produces correct result."
